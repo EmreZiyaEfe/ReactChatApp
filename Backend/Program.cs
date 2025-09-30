@@ -52,5 +52,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
+
 // Render kendi portunu kullanýyor, elle ekleme gerek yok
 app.Run();
