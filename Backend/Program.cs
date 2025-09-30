@@ -7,40 +7,31 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-
 builder.Services.AddHttpClient();
 
-
-
-
-//SQLite
+// SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseSqlite("Data Source = ChatApp.db"));
-
+    options.UseSqlite("Data Source=ChatApp.db"));
 
 builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IMessageService, MessageManager>();
-
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-
-//CORS
+// CORS
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("https://react-chat-app-sage-two.vercel.app")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+            policy.WithOrigins("https://react-chat-app-sage-two.vercel.app") // sadece frontend domainin
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
         });
 });
 
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -49,15 +40,14 @@ var app = builder.Build();
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Urls.Add($"http://*:{port}");
 
-// Configure the HTTP request pipeline.
+// Swagger dev ortamý
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
+// ÖNEMLÝ SIRA
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
