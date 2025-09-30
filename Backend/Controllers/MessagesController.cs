@@ -4,6 +4,8 @@ using Backend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Text.Json;
 
 namespace Backend.Controllers
 {
@@ -12,24 +14,41 @@ namespace Backend.Controllers
     public class MessagesController : ControllerBase
     {
         private readonly IMessageService _messageService;
-        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly IHttpClientFactory _httpClientFactory; // ✅
 
-
-        public MessagesController(IMessageService messageService)
+        public MessagesController(IMessageService messageService, IHttpClientFactory httpClientFactory)
         {
             _messageService = messageService;
+            _httpClientFactory = httpClientFactory; // ✅ inject edildi
         }
 
         private async Task<string> GetSentimentAI(string messageText)
         {
-            var aiUrl = "https://emre1111-chatappv2.hf.space/run/predict";
+            if (string.IsNullOrWhiteSpace(messageText))
+                return "NEUTRAL";
 
-            var response = await _httpClient.PostAsJsonAsync(aiUrl, new { data = new[] { messageText } });
+            var aiUrl = "https://emre1111-lchat.hf.space/analyze".Trim(); ; // ⚠️ boşluksuz!
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var result = await response.Content.ReadFromJsonAsync<dynamic>();
-                return result?.data[0]; // POSITIVE / NEGATIVE / NEUTRAL
+                var client = _httpClientFactory.CreateClient();
+                client.Timeout = TimeSpan.FromSeconds(30); // cold start için
+
+                var response = await client.PostAsJsonAsync(aiUrl, new { text = messageText });
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    using var doc = JsonDocument.Parse(json);
+                    return doc.RootElement.GetProperty("label").GetString() ?? "Unknown";
+                }
+                else
+                {
+                    Console.WriteLine($"AI API Hatası: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("AI Hatası: " + ex.Message);
             }
             return "Unknown";
         }

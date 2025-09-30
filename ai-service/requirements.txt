@@ -1,4 +1,15 @@
-flask
-transformers
+gradio==3.53.2
+transformers==4.56.2
 torch
-gunicorn
+
+
+# flask==3.1.2
+# transformers==4.56.2
+# torch==2.8.0+cpu  # CPU-only versiyon
+# gunicorn==23.0.0
+
+
+# flask
+# transformers
+# torch
+# gunicorn

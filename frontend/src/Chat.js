@@ -17,14 +17,15 @@ function Chat() {
 
         try {
             //Api post istegi
-            const response = await fetch('https://localhost:7192/api/Messages/CreateMessage', {
+            const response = await fetch('https://localhost:7226/api/Messages/CreateMessage', {
                 method: 'POST',
                 headers: {
                     'Content-Type' : 'application/json'
                 },
                 body: JSON.stringify({
                     text: input,
-                    userId: 1 
+                    userId: 1
+
                 }),
             });
 
@@ -50,7 +51,7 @@ function Chat() {
         const fetchMessages = async () => {
             try {
                 const userId = 1;
-                const response = await fetch(`https://localhost:7192/api/Messages/GetMessages/${userId}`);
+                const response = await fetch(`https://localhost:7226/api/Messages/GetMessages/${userId}`);
                 const data = await response.json();
                 const processed = data.map(msg => ({
                 ...msg,
