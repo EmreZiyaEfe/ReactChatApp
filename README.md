@@ -19,7 +19,7 @@ Amaç, **frontend (React / React Native), backend (.NET Core) ve AI servisi (Pyt
 ## ⚙️ Teknoloji ve Hosting
 - **Frontend:** React (web) → Vercel’de deploy edildi  
 - **Mobil:** React Native CLI (APK build denemeleri yapıldı, tamamlanamadı)  
-- **Backend:** .NET Core + SQLite → Render üzerinde deploy denendi (Docker kullanımı zorunlu olduğu için kısmen eksik kaldı)  
+- **Backend:** .NET Core + SQLite → Render üzerinde deploy denendi (Canlıya alındı fakat frontend ile bağlantı kurulamadı)  
 - **AI:** Python + Hugging Face Transformers → Hugging Face Spaces üzerinde test edildi  
 
 ## 📂 Klasör Yapısı
@@ -29,11 +29,11 @@ Amaç, **frontend (React / React Native), backend (.NET Core) ve AI servisi (Pyt
 
   ## 📝 Eksikler ve Notlar
 
-- Backend (.NET + Render): Deploy sırasında Render’ın Docker zorunluluğu nedeniyle API tam olarak çalışır hale getirilemedi.
+- Backend (.NET + Render): API tam olarak frontend ile haberleşemedi.
 
-- React Native CLI: Mobil sürüm için temel ekranlar hazırlandı ancak API/AI entegrasyonu ve APK build tamamlanamadı.
+- React Native CLI: Mobil sürüm API/AI entegrasyonu nedeniyle tamamlanamadı.
 
-- Hugging Face Spaces: Model başarıyla çalıştırıldı ve kullanılabilir durumda.
+- Hugging Face Spaces: Model başarıyla çalıştırıldı ve kullanılabilir durumda fakat gradio api problemi çıktı.
 
   
 ## 🔗 Demo Linkleri
