@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 
@@ -14,18 +14,19 @@ builder.Services.AddHttpClient();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=ChatApp.db"));
 
+// Dependency Injection
 builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IMessageService, MessageManager>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // CORS
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy("_myAllowSpecificOrigins",
         policy =>
         {
-            policy.WithOrigins("https://react-chat-app-sage-two.vercel.app") // sadece frontend domainin
+            // Geçici test için tüm originlere izin
+            policy.AllowAnyOrigin()
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -37,21 +38,19 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-app.Urls.Add($"http://*:{port}");
-
-// Swagger dev ortamý
+// Swagger sadece development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// ÖNEMLÝ SIRA
-app.UseCors(MyAllowSpecificOrigins);
+// Önemli sýra: önce CORS
+app.UseCors("_myAllowSpecificOrigins");
 
 app.UseAuthorization();
 
 app.MapControllers();
 
+// Render kendi portunu kullanýyor, elle ekleme gerek yok
 app.Run();
